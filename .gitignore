@@ -1,0 +1,30 @@
+# .NET build artifacts
+bin/
+obj/
+out/
+
+# User-specific / secrets
+appsettings.*.json
+!appsettings.json
+!appsettings.example.json
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+secrets.json
+.env
+
+# Visual Studio / Rider
+.vs/
+.idea/
+*.ncrunchproject
+
+# Test results / coverage
+TestResults/
+coverage*.xml
+*.coverage
+*.coveragexml
+
+# OS
+.DS_Store
+Thumbs.db

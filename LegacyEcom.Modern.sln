@@ -1,0 +1,57 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{724888E7-76F5-48C7-BF58-BD9D59800D63}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegacyEcom.Domain", "src\LegacyEcom.Domain\LegacyEcom.Domain.csproj", "{1211E94D-B15D-47BB-8C68-BEFB9A0403E4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegacyEcom.Application", "src\LegacyEcom.Application\LegacyEcom.Application.csproj", "{0CE4C59C-51BF-4F56-9292-927B7A7269A8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegacyEcom.Infrastructure", "src\LegacyEcom.Infrastructure\LegacyEcom.Infrastructure.csproj", "{4F2AD229-BCD9-41F5-A3F5-66097B7C268A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegacyEcom.Api", "src\LegacyEcom.Api\LegacyEcom.Api.csproj", "{4C11076E-8622-4548-80CA-4F0FBE300082}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{F6F254BE-5A5B-422F-BBFA-FBC85B2A3B7B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegacyEcom.Tests", "tests\LegacyEcom.Tests\LegacyEcom.Tests.csproj", "{5719553C-6A2F-45DA-AE37-82EEE97EBA19}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1211E94D-B15D-47BB-8C68-BEFB9A0403E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1211E94D-B15D-47BB-8C68-BEFB9A0403E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1211E94D-B15D-47BB-8C68-BEFB9A0403E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1211E94D-B15D-47BB-8C68-BEFB9A0403E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CE4C59C-51BF-4F56-9292-927B7A7269A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CE4C59C-51BF-4F56-9292-927B7A7269A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CE4C59C-51BF-4F56-9292-927B7A7269A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CE4C59C-51BF-4F56-9292-927B7A7269A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F2AD229-BCD9-41F5-A3F5-66097B7C268A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F2AD229-BCD9-41F5-A3F5-66097B7C268A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F2AD229-BCD9-41F5-A3F5-66097B7C268A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F2AD229-BCD9-41F5-A3F5-66097B7C268A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C11076E-8622-4548-80CA-4F0FBE300082}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C11076E-8622-4548-80CA-4F0FBE300082}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C11076E-8622-4548-80CA-4F0FBE300082}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C11076E-8622-4548-80CA-4F0FBE300082}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5719553C-6A2F-45DA-AE37-82EEE97EBA19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5719553C-6A2F-45DA-AE37-82EEE97EBA19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5719553C-6A2F-45DA-AE37-82EEE97EBA19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5719553C-6A2F-45DA-AE37-82EEE97EBA19}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1211E94D-B15D-47BB-8C68-BEFB9A0403E4} = {724888E7-76F5-48C7-BF58-BD9D59800D63}
+		{0CE4C59C-51BF-4F56-9292-927B7A7269A8} = {724888E7-76F5-48C7-BF58-BD9D59800D63}
+		{4F2AD229-BCD9-41F5-A3F5-66097B7C268A} = {724888E7-76F5-48C7-BF58-BD9D59800D63}
+		{4C11076E-8622-4548-80CA-4F0FBE300082} = {724888E7-76F5-48C7-BF58-BD9D59800D63}
+		{5719553C-6A2F-45DA-AE37-82EEE97EBA19} = {F6F254BE-5A5B-422F-BBFA-FBC85B2A3B7B}
+	EndGlobalSection
+EndGlobal
