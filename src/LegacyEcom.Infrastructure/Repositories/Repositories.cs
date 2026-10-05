@@ -43,8 +43,11 @@ public class ProductRepository : IProductRepository
 
         if (!string.IsNullOrWhiteSpace(q))
         {
-            var term = q.Trim();
-            query = query.Where(x => x.Name.Contains(term) || x.Sku.Contains(term));
+            // Explicit case-insensitive match: preserves the legacy SQL Server
+            // CI-collation behavior on every provider (EF InMemory's Contains
+            // is ordinal/case-sensitive, unlike SQL Server LIKE).
+            var term = q.Trim().ToLower();
+            query = query.Where(x => x.Name.ToLower().Contains(term) || x.Sku.ToLower().Contains(term));
         }
 
         var totalCount = query.Count();
