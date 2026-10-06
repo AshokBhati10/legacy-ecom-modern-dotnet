@@ -6,20 +6,139 @@ namespace LegacyEcom.Infrastructure.Data;
 
 /// <summary>
 /// Idempotent development seeder. Ports the legacy <c>Database/SeedData.sql</c>
-/// (6 categories, 12 products, 17 images, 5 variants) into EF Core. Runs only
-/// when the catalog tables are empty and only when enabled via configuration
-/// (<c>SeedData:Enabled</c>, default on in Development).
+/// (6 categories, 12 products, 17 images, 5 variants) into EF Core, then
+/// expands the catalog to ~500 products via <c>ExpandedCatalog</c>.
+/// Runs only when enabled via configuration (<c>SeedData:Enabled</c>,
+/// default on in Development). The expansion is SKU-idempotent: re-running
+/// adds only products whose SKU is not already present.
 /// </summary>
 public static class DbSeeder
 {
+    private const int TargetProductCount = 500;
+
     public static async Task SeedAsync(EcommerceDbContext db, ILogger logger, CancellationToken ct = default)
     {
-        if (await db.Categories.AnyAsync(ct))
+        if (!await db.Categories.AnyAsync(ct))
         {
-            logger.LogInformation("Seed data already present; skipping.");
+            await SeedCategoriesAsync(db, ct);
+        }
+
+        var existingCount = await db.Products.CountAsync(ct);
+        if (existingCount >= TargetProductCount)
+        {
+            logger.LogInformation("Seed data already contains {Count} products; skipping product generation.", existingCount);
             return;
         }
 
+        // Ensure the original 12 products exist (in case categories were
+        // seeded but products were not, e.g. partial historical state).
+        var existingSkus = new HashSet<string>(
+            await db.Products.Where(p => p.Sku != null).Select(p => p.Sku!).ToListAsync(ct));
+
+        var baseProductsAdded = 0;
+        if (existingSkus.Count == 0)
+        {
+            baseProductsAdded = await SeedBaseProductsAsync(db, ct);
+            foreach (var p in await db.Products.Select(p => p.Sku).ToListAsync(ct))
+                existingSkus.Add(p);
+        }
+
+        var expanded = ExpandedCatalog.GetAll();
+        var missing = expanded.Where(p => !existingSkus.Contains(p.Sku)).ToList();
+
+        // Only add what is needed to reach the target.
+        var needed = TargetProductCount - (existingCount + baseProductsAdded);
+        var toAdd = missing.Take(Math.Max(0, needed)).ToList();
+
+        if (toAdd.Count == 0)
+        {
+            logger.LogInformation("Seed data already contains {Count} products; skipping product generation.", existingCount + baseProductsAdded);
+            return;
+        }
+
+        var categoriesBySlug = await db.Categories
+            .ToDictionaryAsync(c => c.Slug, c => c.Id, ct);
+
+        var products = new List<Product>(toAdd.Count);
+        var images = new List<ProductImage>(toAdd.Count);
+        var variants = new List<ProductVariant>();
+
+        foreach (var def in toAdd)
+        {
+            var product = new Product
+            {
+                Sku = def.Sku,
+                Name = def.Name,
+                Slug = def.Slug,
+                ShortDescription = def.ShortDescription,
+                Description = def.Description,
+                Price = def.Price,
+                SalePrice = def.SalePrice,
+                CategoryId = categoriesBySlug[def.CategorySlug],
+                ThumbnailUrl = $"/Content/images/products/{def.ImageFile}",
+                IsActive = true,
+                IsFeatured = def.IsFeatured,
+                StockQuantity = def.Stock,
+                CreatedDate = DateTime.UtcNow
+            };
+            products.Add(product);
+        }
+
+        db.Products.AddRange(products);
+        await db.SaveChangesAsync(ct);
+
+        // One main image per product + a few variants for clothing to
+        // demonstrate the existing variant functionality.
+        var variantSkus = new HashSet<string>(
+            await db.ProductVariants.Select(v => v.Sku).ToListAsync(ct));
+        foreach (var product in products)
+        {
+            var def = toAdd[products.IndexOf(product)];
+            images.Add(new ProductImage
+            {
+                ProductId = product.Id,
+                Url = $"/Content/images/products/{def.ImageFile}",
+                AltText = $"{def.Name} - main image",
+                DisplayOrder = 1,
+                IsMain = true
+            });
+
+            if (def.CategorySlug == "clothing" && products.IndexOf(product) % 3 == 0)
+            {
+                var sizes = new[] { ("Small", "S"), ("Medium", "M"), ("Large", "L") };
+                foreach (var (sizeName, sizeCode) in sizes)
+                {
+                    var vsku = $"{def.Sku}-{sizeCode}";
+                    if (variantSkus.Add(vsku))
+                    {
+                        variants.Add(new ProductVariant
+                        {
+                            ProductId = product.Id,
+                            Name = sizeName,
+                            Sku = vsku,
+                            PriceAdjustment = sizeCode == "L" ? 2.00m : 0.00m,
+                            StockQuantity = def.Stock / 3,
+                            IsActive = true
+                        });
+                    }
+                }
+            }
+        }
+
+        db.ProductImages.AddRange(images);
+        if (variants.Count > 0)
+            db.ProductVariants.AddRange(variants);
+        await db.SaveChangesAsync(ct);
+
+        var finalCount = await db.Products.CountAsync(ct);
+        logger.LogInformation(
+            "Seed data inserted: Categories: 6, Base products added: {Base}, Expanded products added: {Added}, " +
+            "Product images added: {Images}, Variants added: {Variants}, Total products: {Total}.",
+            baseProductsAdded, toAdd.Count, images.Count, variants.Count, finalCount);
+    }
+
+    private static async Task SeedCategoriesAsync(EcommerceDbContext db, CancellationToken ct)
+    {
         var categories = new[]
         {
             new Category { Name = "Electronics", Slug = "electronics", Description = "Phones, computers and gadgets.", ParentCategoryId = null, DisplayOrder = 1, IsActive = true },
@@ -31,10 +150,14 @@ public static class DbSeeder
         };
         db.Categories.AddRange(categories);
         await db.SaveChangesAsync(ct);
+    }
 
-        var audio = categories[1]; var electronics = categories[0];
-        var home = categories[2]; var sports = categories[3];
-        var books = categories[4]; var clothing = categories[5];
+    private static async Task<int> SeedBaseProductsAsync(EcommerceDbContext db, CancellationToken ct)
+    {
+        var categories = await db.Categories.ToDictionaryAsync(c => c.Slug, c => c, ct);
+        var audio = categories["audio"]; var electronics = categories["electronics"];
+        var home = categories["home-kitchen"]; var sports = categories["sports-outdoors"];
+        var books = categories["books"]; var clothing = categories["clothing"];
 
         var products = new[]
         {
@@ -132,8 +255,7 @@ public static class DbSeeder
         }));
 
         await db.SaveChangesAsync(ct);
-        logger.LogInformation("Seed data inserted: {Categories} categories, {Products} products.",
-            categories.Length, products.Length);
+        return products.Length;
     }
 
     private static Product NewProduct(
