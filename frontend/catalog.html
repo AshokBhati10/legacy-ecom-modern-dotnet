@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Products - Northwind Market</title>
+    <title>Shop all products - Northwind Market</title>
     <link rel="stylesheet" href="css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/jquery-ui/all.css" />
     <link rel="stylesheet" href="css/jquery.fancybox.min.css" />
@@ -13,9 +13,15 @@
     <div id="site-header"></div>
 
     <div class="container body-content">
-        <h2>Products</h2>
-        <div class="row">
-            <div class="col-md-3">
+        <ol class="breadcrumb">
+            <li><a href="index.html">Home</a></li>
+            <li class="active">Shop</li>
+        </ol>
+        <div class="section-head" style="margin-top:0">
+            <h2>Shop all products</h2>
+        </div>
+        <div class="row catalog-layout">
+            <div class="col-md-3 filter-panel">
                 <div class="panel panel-default">
                     <div class="panel-heading"><h4 class="panel-title">Categories</h4></div>
                     <div class="panel-body">
@@ -25,21 +31,20 @@
                     </div>
                 </div>
                 <div class="panel panel-default">
-                    <div class="panel-heading"><h4 class="panel-title">Filter</h4></div>
+                    <div class="panel-heading"><h4 class="panel-title">Search</h4></div>
                     <div class="panel-body">
                         <form id="product-filter-form" method="get">
                             <div class="form-group">
-                                <label for="filter-q">Search</label>
-                                <input type="text" id="filter-q" name="q" class="form-control" placeholder="Keywords..." />
+                                <input type="text" id="filter-q" name="q" class="form-control" placeholder="Keywords..." aria-label="Search keywords" />
                             </div>
-                            <button type="submit" class="btn btn-primary btn-block">Apply filter</button>
-                            <button type="button" class="btn btn-link btn-block" id="filter-clear">Clear</button>
+                            <button type="submit" class="btn btn-primary btn-block">Apply</button>
+                            <button type="button" class="btn btn-link btn-block" id="filter-clear">Clear filters</button>
                         </form>
                     </div>
                 </div>
             </div>
             <div class="col-md-9">
-                <p class="text-muted" id="product-count"></p>
+                <p class="result-meta" id="product-count"></p>
                 <div id="product-list" class="row">
                     <div class="col-xs-12"><p class="text-muted">Loading products&hellip;</p></div>
                 </div>

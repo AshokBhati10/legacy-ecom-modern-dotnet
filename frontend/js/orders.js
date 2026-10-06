@@ -8,6 +8,16 @@
         var $list = $('#orders-content');
         var $detail = $('#order-detail');
 
+        function statusBadge(status) {
+            var cls = 'status-placed';
+            var s = String(status || '').toLowerCase();
+            if (s.indexOf('ship') >= 0) cls = 'status-shipped';
+            else if (s.indexOf('deliver') >= 0 || s.indexOf('complet') >= 0) cls = 'status-delivered';
+            else if (s.indexOf('cancel') >= 0) cls = 'status-cancelled';
+            return '<span class="status-badge ' + cls + '">' + legacyApi.esc(status) + '</span>';
+        }
+        legacyLayout.statusBadge = statusBadge;
+
         if ($list.length) {
             legacyLayout.requireAuth().done(function () {
                 legacyApi.getOrders()
@@ -19,11 +29,11 @@
                         var html = '<table id="orders-table" class="table table-striped table-bordered"><thead><tr>' +
                             '<th>Order Number</th><th>Date</th><th>Status</th><th>Items</th><th>Total</th><th></th></tr></thead><tbody>';
                         $.each(orders, function (i, o) {
-                            html += '<tr><td>' + legacyApi.esc(o.orderNumber) + '</td>' +
+                            html += '<tr><td><strong>' + legacyApi.esc(o.orderNumber) + '</strong></td>' +
                                 '<td>' + legacyApi.esc(legacyApi.formatDate(o.orderDate)) + '</td>' +
-                                '<td>' + legacyApi.esc(o.status) + '</td>' +
+                                '<td>' + statusBadge(o.status) + '</td>' +
                                 '<td>' + o.itemCount + '</td>' +
-                                '<td>' + legacyApi.money(o.total) + '</td>' +
+                                '<td><strong>' + legacyApi.money(o.total) + '</strong></td>' +
                                 '<td><a href="order-detail.html?id=' + o.orderId + '" class="btn btn-default btn-sm">Details</a></td></tr>';
                         });
                         html += '</tbody></table>';
@@ -50,11 +60,11 @@
                 legacyApi.getOrder(id)
                     .done(function (o) {
                         $('#crumb-order').text(o.orderNumber);
-                        var html = '<h2>Order ' + legacyApi.esc(o.orderNumber) + '</h2>' +
+                        var html = '<div class="section-head" style="margin-top:0"><h2>Order ' + legacyApi.esc(o.orderNumber) + '</h2>' +
+                            statusBadge(o.status) + '</div>' +
                             '<p class="text-muted">Placed ' + legacyApi.esc(legacyApi.formatDate(o.orderDate)) +
-                            ' &middot; Status: ' + legacyApi.esc(o.status) +
-                            ' &middot; Payment: ' + legacyApi.esc(o.paymentMethod) +
-                            ' &middot; Shipping: ' + legacyApi.esc(o.shippingMethod) + '</p>' +
+                            ' &nbsp;·&nbsp; Payment: ' + legacyApi.esc(o.paymentMethod) +
+                            ' &nbsp;·&nbsp; Shipping: ' + legacyApi.esc(o.shippingMethod) + '</p>' +
                             '<div class="row"><div class="col-md-7">' +
                             '<table class="table table-striped table-bordered"><thead><tr>' +
                             '<th>Product</th><th>Unit Price</th><th>Qty</th><th>Line Total</th></tr></thead><tbody>';

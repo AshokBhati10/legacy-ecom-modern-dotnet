@@ -5,30 +5,32 @@
     // Reusable product card, mirroring _ProductCard.cshtml.
     function productCard(p) {
         var price;
+        var badge = '';
         if (p.salePrice && p.salePrice > 0) {
-            price = '<span class="text-muted"><s>' + legacyApi.money(p.price) + '</s></span> ' +
-                '<strong class="text-danger">' + legacyApi.money(p.salePrice) + '</strong>';
+            price = '<span class="price-was">' + legacyApi.money(p.price) + '</span>' +
+                '<span class="price-sale">' + legacyApi.money(p.salePrice) + '</span>';
+            badge = '<span class="badge-sale">Sale</span>';
         } else {
-            price = '<strong>' + legacyApi.money(p.price) + '</strong>';
+            price = '<span class="price-now">' + legacyApi.money(p.effectivePrice || p.price) + '</span>';
         }
-        var img = p.thumbnailUrl
-            ? '<img src="' + legacyApi.esc(p.thumbnailUrl) + '" alt="' + legacyApi.esc(p.name) + '" class="img-responsive product-thumb" onerror="this.onerror=null;this.src=\'images/no-image.png\'" />'
-            : '<img src="images/no-image.png" alt="' + legacyApi.esc(p.name) + '" class="img-responsive product-thumb" />';
+        var imgSrc = legacyApi.imageUrl(p.thumbnailUrl);
         return '' +
-            '<div class="col-sm-6 col-md-4 col-lg-3 product-card">' +
-            '  <div class="thumbnail">' +
-            '    <a href="product.html?id=' + p.id + '">' + img + '</a>' +
-            '    <div class="caption">' +
+            '<div class="col-xs-6 col-sm-6 col-md-4 col-lg-3 product-card">' +
+            '  <div class="card">' +
+            '    <a class="product-media" href="product.html?id=' + p.id + '">' + badge +
+            '      <img src="' + legacyApi.esc(imgSrc) + '" alt="' + legacyApi.esc(p.name) + '" loading="lazy" onerror="legacyApi.imageFallback(this)" />' +
+            '    </a>' +
+            '    <div class="product-body">' +
             '      <h4 class="product-name"><a href="product.html?id=' + p.id + '">' + legacyApi.esc(p.name) + '</a></h4>' +
             '      <p class="product-price">' + price + '</p>' +
-            '      <p>' +
-            '        <form class="add-to-cart-form" method="post">' +
+            '      <div class="product-actions">' +
+            '        <form class="add-to-cart-form" method="post" style="display:contents">' +
             '          <input type="hidden" name="productId" value="' + p.id + '" />' +
             '          <input type="hidden" name="quantity" value="1" />' +
-            '          <button type="submit" class="btn btn-primary btn-sm">Add to Cart</button> ' +
-            '          <a href="product.html?id=' + p.id + '" class="btn btn-default btn-sm">Details</a>' +
+            '          <button type="submit" class="btn btn-primary btn-sm">Add to Cart</button>' +
             '        </form>' +
-            '      </p>' +
+            '        <a href="product.html?id=' + p.id + '" class="btn btn-default btn-sm">Details</a>' +
+            '      </div>' +
             '    </div>' +
             '  </div>' +
             '</div>';
@@ -36,20 +38,31 @@
 
     legacyLayout.productCard = productCard;
 
+    // Category metadata for richer cards (icons + taglines).
+    var CATEGORY_META = {
+        'Electronics': { icon: 'glyphicon-phone', tag: 'Laptops, phones & more' },
+        'Audio': { icon: 'glyphicon-headphones', tag: 'Headphones & speakers' },
+        'Home & Kitchen': { icon: 'glyphicon-home', tag: 'Cookware & appliances' },
+        'Sports & Outdoors': { icon: 'glyphicon-flag', tag: 'Fitness & training' },
+        'Books': { icon: 'glyphicon-book', tag: 'Classics & collections' },
+        'Clothing': { icon: 'glyphicon-tags', tag: 'Everyday apparel' }
+    };
+
     $(function () {
-        // Categories -> tiles.
+        // Categories -> cards.
         legacyApi.getCategories()
             .done(function (cats) {
                 var $row = $('#home-categories').empty();
                 $.each(cats.slice(0, 6), function (i, c) {
+                    var meta = CATEGORY_META[c.name] || { icon: 'glyphicon-th-large', tag: 'Shop the collection' };
                     $row.append(
                         '<div class="col-xs-6 col-sm-4 col-md-2">' +
-                        '  <div class="panel panel-default category-tile">' +
-                        '    <div class="panel-body">' +
-                        '      <h4>' + legacyApi.esc(c.name) + '</h4>' +
-                        '      <a href="catalog.html?categoryId=' + c.id + '" class="btn btn-link btn-sm">Shop now &rarr;</a>' +
-                        '    </div>' +
-                        '  </div>' +
+                        '  <a class="category-card" href="catalog.html?categoryId=' + c.id + '">' +
+                        '    <span class="cat-icon"><span class="glyphicon ' + meta.icon + '"></span></span>' +
+                        '    <h4>' + legacyApi.esc(c.name) + '</h4>' +
+                        '    <p>' + legacyApi.esc(meta.tag) + '</p>' +
+                        '    <span class="cat-cta">Shop now &rarr;</span>' +
+                        '  </a>' +
                         '</div>');
                 });
             })

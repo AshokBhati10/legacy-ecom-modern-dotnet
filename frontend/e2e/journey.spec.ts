@@ -11,8 +11,8 @@ test.describe('legacy storefront customer journey', () => {
   test('browse, search, detail, cart, register, checkout, orders, logout', async ({ page }) => {
     // 1. HOME
     await page.goto('/index.html');
-    await expect(page.locator('.hero-banner h1')).toContainText('Everything you need');
-    await expect(page.locator('#home-categories .panel')).toHaveCount(6, { timeout: 10000 });
+    await expect(page.locator('.hero h1')).toContainText('Everything you need');
+    await expect(page.locator('#home-categories .category-card')).toHaveCount(6, { timeout: 10000 });
     await expect(page.locator('#home-featured .product-card').first()).toBeVisible({ timeout: 10000 });
 
     // 2. CATALOG + SEARCH + CATEGORY
@@ -41,23 +41,23 @@ test.describe('legacy storefront customer journey', () => {
     // 3. PRODUCT DETAIL
     await page.locator('#product-list .product-card a', { hasText: 'Wireless Headphones Pro' }).first().click();
     await expect(page).toHaveURL(/product\.html\?id=\d+/);
-    await expect(page.locator('#product-detail h2')).toContainText('Wireless Headphones Pro', { timeout: 10000 });
+    await expect(page.locator('#product-detail h1')).toContainText('Wireless Headphones Pro', { timeout: 10000 });
 
-    // variant + quantity 2 + add to cart
-    await page.locator('#variantId').selectOption({ index: 1 });
+    // variant (pills) + quantity 2 + add to cart
+    await page.locator('.variant-pills input').nth(1).check();
     await page.locator('#quantity').fill('2');
     await page.locator('#detail-add-form button[type="submit"]').click();
     await expect(page.locator('.alert-success')).toContainText('Product added to your cart', { timeout: 10000 });
 
-    // mini-cart updated in header
-    await expect(page.locator('#mini-cart')).toContainText('Cart (2)', { timeout: 10000 });
+    // mini-cart updated in header (badge + total)
+    await expect(page.locator('#mini-cart .cart-count-badge')).toContainText('2', { timeout: 10000 });
 
     // 4. FULL CART — update quantity
     await page.goto('/cart.html');
     await expect(page.locator('#cart-content table tbody tr')).toHaveCount(1, { timeout: 10000 });
     await page.locator('.cart-update-form [name="quantity"]').fill('3');
-    await page.locator('.cart-update-form button[type="submit"]').click();
-    await expect(page.locator('#cart-content tfoot')).toContainText('Subtotal (3 item(s))', { timeout: 10000 });
+    await page.locator('.cart-update-form [name="quantity"]').dispatchEvent('change');
+    await expect(page.locator('.cart-summary-card')).toContainText('Subtotal (3 items)', { timeout: 10000 });
 
     // 5. REGISTER
     await page.goto('/register.html');
@@ -127,10 +127,10 @@ test.describe('legacy storefront customer journey', () => {
   test('mobile viewport renders without major overflow', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/index.html');
-    await expect(page.locator('.hero-banner h1')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('.hero h1')).toBeVisible({ timeout: 10000 });
     // navbar toggle
     await page.locator('.navbar-toggle').click();
-    await expect(page.locator('.navbar-collapse.in a', { hasText: 'Products' }).first()).toBeVisible();
+    await expect(page.locator('.navbar-collapse.in a', { hasText: 'Shop' }).first()).toBeVisible();
 
     await page.goto('/catalog.html');
     await expect(page.locator('#product-list .product-card').first()).toBeVisible({ timeout: 10000 });

@@ -194,6 +194,23 @@ var legacyApi = legacyApi || {};
     legacyApi.getOrders = getOrders;
     legacyApi.getOrder = getOrder;
     legacyApi.refreshXsrf = refreshXsrf;
+    // -- Image URL mapping ------------------------------------------------
+    // The API returns legacy paths like /Content/images/products/x.jpg.
+    // Map them to the local frontend assets (images/products/x.jpg) so the
+    // existing API contract is preserved while images resolve locally.
+    // Falls back to images/no-image.png for anything missing.
+    function imageUrl(apiPath) {
+        if (!apiPath) return 'images/no-image.png';
+        var mapped = String(apiPath).replace(/^\/Content\/images\//, 'images/');
+        return mapped;
+    }
+    function imageFallback(img) {
+        img.onerror = null;
+        img.src = 'images/no-image.png';
+    }
+
+    legacyApi.imageUrl = imageUrl;
+    legacyApi.imageFallback = imageFallback;
     legacyApi.money = money;
     legacyApi.formatDate = formatDate;
     legacyApi.esc = esc;

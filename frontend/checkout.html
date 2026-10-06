@@ -14,11 +14,11 @@
 
     <div class="container body-content">
         <h2>Checkout</h2>
-        <ol class="breadcrumb checkout-steps" id="checkout-steps">
-            <li data-step="address" class="active">1. Address</li>
-            <li data-step="shipping">2. Shipping</li>
-            <li data-step="payment">3. Payment</li>
-            <li data-step="confirm">4. Confirmation</li>
+        <ol class="checkout-progress" id="checkout-steps">
+            <li data-step="address" data-num="1" class="active">Address</li>
+            <li data-step="shipping" data-num="2">Shipping</li>
+            <li data-step="payment" data-num="3">Payment</li>
+            <li data-step="confirm" data-num="4">Confirmation</li>
         </ol>
 
         <div class="alert alert-danger validation-summary-errors hidden" id="checkout-errors" role="alert"></div>
@@ -91,10 +91,15 @@
 
         <!-- STEP 4: Confirmation -->
         <div id="step-confirm" class="checkout-step hidden">
-            <div class="alert alert-success">
-                <h4>Order placed!</h4>
-                <p>Thank you for your order. Your order number is <strong id="confirm-order-number"></strong>.</p>
-                <p><a href="orders.html" class="btn btn-primary">View my orders</a> <a href="catalog.html" class="btn btn-default">Continue shopping</a></p>
+            <div class="confirm-hero">
+                <span class="confirm-icon"><span class="glyphicon glyphicon-ok"></span></span>
+                <h2>Thank you — order placed!</h2>
+                <p class="lead">Your order <strong id="confirm-order-number"></strong> is confirmed.<br />
+                We've sent a receipt to your email.</p>
+                <p>
+                    <a href="orders.html" class="btn btn-primary btn-lg">View my orders</a>
+                    <a href="catalog.html" class="btn btn-default btn-lg">Continue shopping</a>
+                </p>
             </div>
         </div>
     </div>

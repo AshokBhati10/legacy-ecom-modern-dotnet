@@ -10,10 +10,13 @@
     var shippingMethod = null;
 
     function goStep(name) {
+        var order = ['address', 'shipping', 'payment', 'confirm'];
+        var idx = order.indexOf(name);
         $('.checkout-step').addClass('hidden');
         $('#step-' + name).removeClass('hidden');
-        $('#checkout-steps li').removeClass('active');
-        $('#checkout-steps li[data-step="' + name + '"]').addClass('active');
+        $('#checkout-steps li').each(function (i) {
+            $(this).toggleClass('active', i === idx).toggleClass('done', i < idx);
+        });
         $(window).scrollTop(0);
     }
 
@@ -55,12 +58,13 @@
                     return;
                 }
                 $.each(options, function (i, o) {
-                    $box.append('<div class="radio"><label>' +
+                    $box.append('<label class="shipping-option' + (i === 0 ? ' selected' : '') + '">' +
                         '<input type="radio" name="ShippingMethod" value="' + legacyApi.esc(o.code) + '"' +
-                        (i === 0 ? ' checked="checked"' : '') + ' class="shipping-option" /> ' +
-                        '<strong>' + legacyApi.esc(o.name) + '</strong> - ' + legacyApi.money(o.cost) +
+                        (i === 0 ? ' checked="checked"' : '') + ' class="shipping-option-input" /> ' +
+                        '<strong>' + legacyApi.esc(o.name) + '</strong>' +
+                        '<span class="pull-right"><strong>' + legacyApi.money(o.cost) + '</strong></span>' +
                         '<br /><small class="text-muted">' + legacyApi.esc(o.description) + '</small>' +
-                        '</label></div>');
+                        '</label>');
                 });
                 refreshSummary();
             })
@@ -124,7 +128,11 @@
         });
 
         // Recompute the summary when the shipping method changes.
-        $('#shipping-options').on('change', '.shipping-option', refreshSummary);
+        $('#shipping-options').on('change', '.shipping-option-input', function () {
+            $('#shipping-options .shipping-option').removeClass('selected');
+            $(this).closest('.shipping-option').addClass('selected');
+            refreshSummary();
+        });
 
         $('#shipping-form').on('submit', function (e) {
             e.preventDefault();

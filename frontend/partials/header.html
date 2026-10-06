@@ -2,33 +2,36 @@
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" aria-label="Toggle navigation">
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="index.html">Northwind Market</a>
+            <a class="navbar-brand" href="index.html">
+                <span class="brand-mark"><span class="glyphicon glyphicon-shopping-cart"></span></span>
+                Northwind&nbsp;Market
+            </a>
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li data-nav="home"><a href="index.html">Home</a></li>
-                <li data-nav="catalog"><a href="catalog.html">Products</a></li>
+                <li data-nav="catalog"><a href="catalog.html">Shop</a></li>
             </ul>
             <form class="navbar-form navbar-left" role="search" id="header-search-form" action="catalog.html" method="get">
                 <div class="form-group">
-                    <input type="text" name="q" class="form-control" placeholder="Search products..." id="header-search-q" />
+                    <input type="text" name="q" class="form-control" placeholder="Search products..." id="header-search-q" aria-label="Search products" />
                 </div>
-                <button type="submit" class="btn btn-default">Search</button>
+                <button type="submit" class="btn btn-default btn-sm">Search</button>
             </form>
             <ul class="nav navbar-nav navbar-right">
-                <li id="mini-cart"><a href="cart.html"><span class="glyphicon glyphicon-shopping-cart"></span> Cart (0)</a></li>
+                <li id="mini-cart"><a href="cart.html"><span class="glyphicon glyphicon-shopping-cart"></span> <span class="cart-count-badge">0</span> <span class="cart-total-label">$0.00</span></a></li>
                 <li class="auth-anon"><a href="register.html">Register</a></li>
                 <li class="auth-anon"><a href="login.html">Log in</a></li>
                 <li class="auth-user hidden"><a href="orders.html" id="nav-hello">Hello!</a></li>
                 <li class="auth-user hidden"><a href="orders.html">My Orders</a></li>
                 <li class="auth-user hidden">
-                    <form id="logout-form" class="navbar-form" style="margin:0;padding:8px 0">
-                        <button type="submit" class="btn btn-link navbar-btn" style="color:#9d9d9d">Log off</button>
+                    <form id="logout-form" style="margin:0">
+                        <button type="submit" class="btn btn-link" style="color:#9db5ad;padding:15px 12px">Log off</button>
                     </form>
                 </li>
             </ul>

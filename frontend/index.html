@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Northwind Market - Home</title>
+    <title>Northwind Market - Quality essentials, delivered</title>
     <link rel="stylesheet" href="css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/jquery-ui/all.css" />
     <link rel="stylesheet" href="css/jquery.fancybox.min.css" />
@@ -13,22 +13,48 @@
     <div id="site-header"></div>
 
     <div class="container body-content">
-        <div class="hero-banner">
-            <div class="hero-kicker">The modernized classic store</div>
-            <h1>Everything you need,<br />delivered to your door.</h1>
-            <p class="lead">Browse electronics, home essentials, sports gear and more &mdash; with fast checkout and order tracking.</p>
-            <p>
-                <a href="catalog.html" class="btn btn-default btn-lg">Shop all products</a>
-                <a href="catalog.html" class="btn btn-link btn-lg" style="color:#fff" id="hero-categories">Browse categories</a>
-            </p>
+        <div class="hero">
+            <div class="hero-art">
+                <img src="images/products/headphones-pro-1.jpg" alt="" aria-hidden="true" />
+            </div>
+            <div class="hero-inner">
+                <div class="hero-kicker">The modernized classic store</div>
+                <h1>Everything you need, delivered to your door.</h1>
+                <p class="lead">Shop electronics, home essentials, sports gear and more — with fast checkout and order tracking.</p>
+                <p class="hero-cta">
+                    <a href="catalog.html" class="btn btn-primary btn-lg">Shop all products</a>
+                    <a href="catalog.html" class="btn btn-default btn-lg">Browse categories</a>
+                </p>
+            </div>
         </div>
 
-        <h2>Popular categories <a href="catalog.html" class="btn btn-link pull-right">View all &rarr;</a></h2>
+        <div class="promo-strip">
+            <div class="promo-card">
+                <span class="promo-icon"><span class="glyphicon glyphicon-plane"></span></span>
+                <div><strong>Fast shipping</strong><span>Free standard shipping on orders $50+</span></div>
+            </div>
+            <div class="promo-card">
+                <span class="promo-icon"><span class="glyphicon glyphicon-refresh"></span></span>
+                <div><strong>Easy returns</strong><span>30-day hassle-free returns</span></div>
+            </div>
+            <div class="promo-card">
+                <span class="promo-icon"><span class="glyphicon glyphicon-lock"></span></span>
+                <div><strong>Secure checkout</strong><span>Your details stay private</span></div>
+            </div>
+        </div>
+
+        <div class="section-head">
+            <h2>Shop by category</h2>
+            <a class="section-link" href="catalog.html">View all &rarr;</a>
+        </div>
         <div class="row" id="home-categories">
             <div class="col-xs-12"><p class="text-muted">Loading categories&hellip;</p></div>
         </div>
 
-        <h2 style="margin-top:30px">Featured products <a href="catalog.html" class="btn btn-link pull-right">View all &rarr;</a></h2>
+        <div class="section-head">
+            <h2>Featured products</h2>
+            <a class="section-link" href="catalog.html">View all &rarr;</a>
+        </div>
         <div class="row" id="home-featured">
             <div class="col-xs-12"><p class="text-muted">Loading featured products&hellip;</p></div>
         </div>

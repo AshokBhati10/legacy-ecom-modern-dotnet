@@ -13,29 +13,26 @@
     <div id="site-header"></div>
 
     <div class="container body-content">
-        <h2>Log in</h2>
-        <div class="alert alert-danger validation-summary-errors hidden" id="login-errors" role="alert"></div>
-        <form id="login-form" class="form-horizontal" method="post" novalidate>
-            <div class="form-group">
-                <label class="col-md-2 control-label" for="Email">Email</label>
-                <div class="col-md-6"><input type="email" id="Email" name="Email" class="form-control" data-val="true" data-val-required="Email is required." data-val-email="Enter a valid email address." /></div>
-            </div>
-            <div class="form-group">
-                <label class="col-md-2 control-label" for="Password">Password</label>
-                <div class="col-md-6"><input type="password" id="Password" name="Password" class="form-control" data-val="true" data-val-required="Password is required." /></div>
-            </div>
-            <div class="form-group">
-                <div class="col-md-offset-2 col-md-6">
+        <div class="auth-wrap">
+            <div class="auth-card">
+                <h2>Welcome back</h2>
+                <p class="text-muted">Log in to track orders and check out faster.</p>
+                <div class="alert alert-danger validation-summary-errors hidden" id="login-errors" role="alert"></div>
+                <form id="login-form" method="post" novalidate>
+                    <div class="form-group">
+                        <label for="Email">Email</label>
+                        <input type="email" id="Email" name="Email" class="form-control" placeholder="you@example.com" data-val="true" data-val-required="Email is required." data-val-email="Enter a valid email address." />
+                    </div>
+                    <div class="form-group">
+                        <label for="Password">Password</label>
+                        <input type="password" id="Password" name="Password" class="form-control" placeholder="••••••••" data-val="true" data-val-required="Password is required." />
+                    </div>
                     <div class="checkbox"><label><input type="checkbox" id="RememberMe" name="RememberMe" /> Remember me</label></div>
-                </div>
+                    <button type="submit" class="btn btn-primary btn-lg btn-block">Log in</button>
+                    <p class="text-center" style="margin-top:16px">New here? <a href="register.html">Create an account</a></p>
+                </form>
             </div>
-            <div class="form-group">
-                <div class="col-md-offset-2 col-md-6">
-                    <button type="submit" class="btn btn-primary">Log in</button>
-                    <a href="register.html" class="btn btn-link">Register as a new user</a>
-                </div>
-            </div>
-        </form>
+        </div>
     </div>
 
     <div id="site-footer"></div>

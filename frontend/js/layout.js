@@ -17,11 +17,13 @@ var legacyLayout = legacyLayout || {};
                 $('#mini-cart').html(
                     '<a href="cart.html" title="View cart">' +
                     '<span class="glyphicon glyphicon-shopping-cart"></span> ' +
-                    'Cart (' + mini.itemCount + ') - ' + legacyApi.money(mini.subTotal) + '</a>');
+                    '<span class="cart-count-badge">' + mini.itemCount + '</span> ' +
+                    '<span class="cart-total-label">' + legacyApi.money(mini.subTotal) + '</span></a>');
             })
             .fail(function () {
                 $('#mini-cart').html(
-                    '<a href="cart.html"><span class="glyphicon glyphicon-shopping-cart"></span> Cart</a>');
+                    '<a href="cart.html"><span class="glyphicon glyphicon-shopping-cart"></span> ' +
+                    '<span class="cart-count-badge">0</span></a>');
             });
     }
 
