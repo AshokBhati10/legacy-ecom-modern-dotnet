@@ -28,3 +28,9 @@ coverage*.xml
 # OS
 .DS_Store
 Thumbs.db
+
+# Frontend (React/Vite)
+node_modules/
+frontend/dist/
+frontend/test-results/
+frontend/playwright-report/

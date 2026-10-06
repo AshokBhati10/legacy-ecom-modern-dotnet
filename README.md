@@ -72,6 +72,31 @@ sets the readable `XSRF-TOKEN` cookie; send it back in the `X-XSRF-TOKEN`
 header. Fetch a fresh token after login/logout/register (tokens bind to the
 authenticated identity).
 
+## Frontend (React storefront)
+
+`frontend/` is a modern React 19 + TypeScript + Vite + Tailwind CSS v4 +
+React Router single-page app that recreates the legacy MVC site's
+customer-facing functionality against the API above. **The backend is frozen:**
+no backend code was changed for the frontend; all business rules stay
+server-side.
+
+```bash
+cd frontend
+npm install
+npm run dev        # http://localhost:5173 — /api is proxied to the backend
+```
+
+The Vite dev server proxies `/api` to the backend (default
+`http://localhost:5174`, override with `VITE_API_PROXY_TARGET`), so cookie
+auth + session cart + XSRF work same-origin with no backend CORS change. See
+`frontend/README.md` for architecture, the legacy Razor → React mapping, and
+production notes.
+
+Pages: Home, Shop (search / category tree / pagination), Product detail
+(gallery lightbox, variants), Cart + mini-cart drawer, 4-step Checkout
+(Address → Shipping → Payment → Confirmation), Login, Register, Order history
++ detail. Playwright E2E: `npx playwright test` (3 specs, full journey).
+
 ## Verification
 
 - `dotnet build` — 0 warnings, 0 errors.
