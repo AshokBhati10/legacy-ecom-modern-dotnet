@@ -72,30 +72,35 @@ sets the readable `XSRF-TOKEN` cookie; send it back in the `X-XSRF-TOKEN`
 header. Fetch a fresh token after login/logout/register (tokens bind to the
 authenticated identity).
 
-## Frontend (React storefront)
+## Frontend (legacy-stack storefront)
 
-`frontend/` is a modern React 19 + TypeScript + Vite + Tailwind CSS v4 +
-React Router single-page app that recreates the legacy MVC site's
-customer-facing functionality against the API above. **The backend is frozen:**
-no backend code was changed for the frontend; all business rules stay
-server-side.
+`frontend/` is a static HTML storefront built with the **original legacy
+frontend technology stack** — jQuery 3.4.1, jQuery UI 1.12.1, Bootstrap 3,
+jQuery Validate + Unobtrusive Validation, DataTables, and Fancybox 3 — talking
+to the .NET 8 Minimal API as JSON. **The backend is the completed .NET 8
+modernization and is not being reverted to the legacy MVC architecture; no
+backend code was changed for this frontend.**
 
 ```bash
+# 1. Start the backend
+cd src/LegacyEcom.Api
+ASPNETCORE_ENVIRONMENT=Development dotnet run   # http://localhost:5174
+
+# 2. Start the storefront (from frontend/; Node built-ins only, no npm install)
 cd frontend
-npm install
-npm run dev        # http://localhost:5173 — /api is proxied to the backend
+node dev-server.mjs        # http://localhost:5173 — /api is proxied to the backend
 ```
 
-The Vite dev server proxies `/api` to the backend (default
-`http://localhost:5174`, override with `VITE_API_PROXY_TARGET`), so cookie
-auth + session cart + XSRF work same-origin with no backend CORS change. See
-`frontend/README.md` for architecture, the legacy Razor → React mapping, and
-production notes.
+The dev server proxies `/api` to the backend, so cookie auth + session cart +
+XSRF work same-origin with no backend CORS change. See `frontend/README.md`
+for the stack rationale, architecture, and the legacy MVC → API-based
+differences.
 
-Pages: Home, Shop (search / category tree / pagination), Product detail
-(gallery lightbox, variants), Cart + mini-cart drawer, 4-step Checkout
+Pages: Home, Products (search / category tree / pagination), Product detail
+(Fancybox gallery, variants), Cart + mini-cart, 4-step Checkout wizard
 (Address → Shipping → Payment → Confirmation), Login, Register, Order history
-+ detail. Playwright E2E: `npx playwright test` (3 specs, full journey).
+(DataTables) + detail. Playwright E2E: `npx playwright test frontend/e2e/journey.spec.ts`
+(3 specs, full journey against the real backend).
 
 ## Verification
 

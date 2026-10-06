@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout - Northwind Market</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/jquery-ui/all.css" />
+    <link rel="stylesheet" href="css/jquery.fancybox.min.css" />
+    <link rel="stylesheet" href="css/site.css" />
+</head>
+<body data-page="checkout">
+    <div id="site-header"></div>
+
+    <div class="container body-content">
+        <h2>Checkout</h2>
+        <ol class="breadcrumb checkout-steps" id="checkout-steps">
+            <li data-step="address" class="active">1. Address</li>
+            <li data-step="shipping">2. Shipping</li>
+            <li data-step="payment">3. Payment</li>
+            <li data-step="confirm">4. Confirmation</li>
+        </ol>
+
+        <div class="alert alert-danger validation-summary-errors hidden" id="checkout-errors" role="alert"></div>
+
+        <!-- STEP 1: Address -->
+        <div id="step-address" class="checkout-step">
+            <form id="address-form" class="form-horizontal" method="post" novalidate>
+                <div class="form-group"><label class="col-md-2 control-label" for="Email">Email</label><div class="col-md-6"><input type="email" id="Email" name="Email" class="form-control" data-val="true" data-val-required="Email is required." data-val-email="Enter a valid email address." /></div></div>
+                <div class="form-group"><label class="col-md-2 control-label" for="FirstName">First name</label><div class="col-md-6"><input type="text" id="FirstName" name="FirstName" class="form-control" data-val="true" data-val-required="First name is required." /></div></div>
+                <div class="form-group"><label class="col-md-2 control-label" for="LastName">Last name</label><div class="col-md-6"><input type="text" id="LastName" name="LastName" class="form-control" data-val="true" data-val-required="Last name is required." /></div></div>
+                <div class="form-group"><label class="col-md-2 control-label" for="Phone">Phone</label><div class="col-md-6"><input type="text" id="Phone" name="Phone" class="form-control" /></div></div>
+                <div class="form-group"><label class="col-md-2 control-label" for="Street">Street</label><div class="col-md-6"><input type="text" id="Street" name="Street" class="form-control" data-val="true" data-val-required="Street is required." /></div></div>
+                <div class="form-group"><label class="col-md-2 control-label" for="City">City</label><div class="col-md-6"><input type="text" id="City" name="City" class="form-control" data-val="true" data-val-required="City is required." /></div></div>
+                <div class="form-group"><label class="col-md-2 control-label" for="State">State</label><div class="col-md-6"><input type="text" id="State" name="State" class="form-control" data-val="true" data-val-required="State is required." /></div></div>
+                <div class="form-group"><label class="col-md-2 control-label" for="PostalCode">Postal code</label><div class="col-md-6"><input type="text" id="PostalCode" name="PostalCode" class="form-control" data-val="true" data-val-required="Postal code is required." /></div></div>
+                <div class="form-group"><label class="col-md-2 control-label" for="Country">Country</label><div class="col-md-6"><input type="text" id="Country" name="Country" class="form-control" data-val="true" data-val-required="Country is required." /></div></div>
+                <div class="form-group"><div class="col-md-offset-2 col-md-6"><button type="submit" class="btn btn-primary">Continue to Shipping</button></div></div>
+            </form>
+        </div>
+
+        <!-- STEP 2: Shipping -->
+        <div id="step-shipping" class="checkout-step hidden">
+            <div class="row">
+                <div class="col-md-7">
+                    <form id="shipping-form" method="post">
+                        <h4>Choose a shipping method</h4>
+                        <div id="shipping-options"><p class="text-muted">Loading shipping options&hellip;</p></div>
+                        <div class="form-group" style="margin-top:15px">
+                            <button type="submit" class="btn btn-primary">Continue to Payment</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-5">
+                    <div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title">Order Summary</h4></div><div class="panel-body" id="shipping-summary"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 3: Payment -->
+        <div id="step-payment" class="checkout-step hidden">
+            <div class="row">
+                <div class="col-md-7">
+                    <form id="payment-form" class="form-horizontal" method="post" novalidate>
+                        <h4>Payment method</h4>
+                        <div class="radio"><label><input type="radio" name="PaymentMethod" value="CashOnDelivery" checked="checked" /> <strong>Cash on Delivery</strong> <small class="text-muted">- pay when your order arrives</small></label></div>
+                        <div class="radio"><label><input type="radio" name="PaymentMethod" value="Card" /> <strong>Credit / Debit Card</strong> <small class="text-muted">- demo only, no real charge is made</small></label></div>
+
+                        <div id="card-fields" style="display:none">
+                            <h4>Card details</h4>
+                            <div class="form-group"><label class="col-md-3 control-label" for="CardholderName">Name on card</label><div class="col-md-9"><input type="text" id="CardholderName" name="CardholderName" class="form-control" /></div></div>
+                            <div class="form-group"><label class="col-md-3 control-label" for="CardNumber">Card number</label><div class="col-md-9"><input type="text" id="CardNumber" name="CardNumber" class="form-control" autocomplete="off" /></div></div>
+                            <div class="form-group"><label class="col-md-3 control-label">Expiry</label>
+                                <div class="col-md-4"><select id="ExpiryMonth" name="ExpiryMonth" class="form-control"><option value="">-- MM --</option></select></div>
+                                <div class="col-md-5"><select id="ExpiryYear" name="ExpiryYear" class="form-control"><option value="">-- YYYY --</option></select></div>
+                            </div>
+                            <div class="form-group"><label class="col-md-3 control-label" for="Cvv">CVV</label><div class="col-md-9"><input type="text" id="Cvv" name="Cvv" class="form-control" autocomplete="off" style="width:100px" /></div></div>
+                            <p class="text-muted"><small>Demo checkout &mdash; card details are validated in the browser and on the server, and are never stored.</small></p>
+                        </div>
+
+                        <div class="form-group" style="margin-top:15px">
+                            <div class="col-md-12"><button type="submit" class="btn btn-success btn-lg">Place Order</button></div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-5">
+                    <div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title">Order Summary</h4></div><div class="panel-body" id="payment-summary"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 4: Confirmation -->
+        <div id="step-confirm" class="checkout-step hidden">
+            <div class="alert alert-success">
+                <h4>Order placed!</h4>
+                <p>Thank you for your order. Your order number is <strong id="confirm-order-number"></strong>.</p>
+                <p><a href="orders.html" class="btn btn-primary">View my orders</a> <a href="catalog.html" class="btn btn-default">Continue shopping</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="site-footer"></div>
+
+    <script src="js/jquery-3.4.1.min.js"></script>
+    <script src="js/jquery-ui-1.12.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.validate.min.js"></script>
+    <script src="js/jquery.validate.unobtrusive.min.js"></script>
+    <script src="js/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="js/jquery.fancybox.min.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/checkout.js"></script>
+</body>
+</html>

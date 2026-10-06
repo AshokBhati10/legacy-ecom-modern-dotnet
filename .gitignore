@@ -29,8 +29,6 @@ coverage*.xml
 .DS_Store
 Thumbs.db
 
-# Frontend (React/Vite)
-node_modules/
-frontend/dist/
-frontend/test-results/
-frontend/playwright-report/
+# Frontend (legacy-stack static site: jQuery/Bootstrap 3, no build step)
+frontend/e2e/test-results/
+frontend/e2e/playwright-report/

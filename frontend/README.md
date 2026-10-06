@@ -1,115 +1,115 @@
-# Northwind Market — Frontend
+# Storefront (legacy-stack frontend)
 
-Modern React storefront for the already-modernized **legacy-ecom-modern-dotnet**
-.NET 8 Minimal API backend. This frontend recreates the customer-facing
-functionality of the original .NET 4.7 MVC / Razor / jQuery application (see
-the class-plan PDF in `workspace/user/files/`) against the existing REST API.
+**The backend is the completed .NET 8 modernization and is not being reverted to the legacy MVC architecture.**
 
-**The backend is frozen.** This project contains zero backend code and makes
-zero backend changes. All business rules (pricing, discounts, cart totals,
-shipping, tax, checkout validation, order creation, auth) stay server-side;
-the UI only displays data and submits forms.
+This is a static HTML frontend built with the **original legacy frontend technology stack**, talking to the existing .NET 8 Minimal API as JSON. No backend code was changed for this frontend.
 
-## Stack
+## Technology stack
 
-- React 19 + TypeScript + Vite
-- React Router (client-side routing)
-- Tailwind CSS v4
-- No UI kit — small hand-built components
+| Legacy stack | Version | Purpose |
+|---|---|---|
+| jQuery | 3.4.1 | DOM, AJAX, events (`$(function () { ... })`, `$.ajax`) |
+| jQuery UI | 1.12.1 | Dialogs (e.g. clear-cart confirm) |
+| Bootstrap | 3.4.1 | Grid, navbar, panels, forms, modals, responsive layout |
+| jQuery Validate | 1.19.x | Client-side form validation |
+| jQuery Unobtrusive Validation | 3.2.x | `data-val-*` attribute rules |
+| jQuery Unobtrusive Ajax | 3.2.x | AJAX form helpers |
+| DataTables | 1.10.x | Order history table (sort/paging) |
+| Fancybox | 3.5.x | Product image gallery lightbox |
 
-## Prerequisites
+No React, Vue, Angular, Tailwind, or build step. All libraries are vendored as
+plain files under `css/` and `js/` (copied from the original application's
+`Content/` and `Scripts/` folders).
 
-- Node.js 20+ and npm
-- The backend API running (see the repo's `docs/Running-Locally.md`).
-  Default: `http://localhost:5174`.
+## Why this stack
 
-## Run (development)
+The original application was an ASP.NET MVC 5 site using exactly these
+libraries. Rebuilding the storefront with them preserves the original
+interaction model (server-style pages, jQuery AJAX partial updates, Bootstrap 3
+components) while the .NET 8 Minimal API remains the only backend. The visual
+language follows the legacy Bootstrap 3 patterns; the reference design
+(museshopcart.webflow.io) was inspiration only.
+
+## Architecture
+
+```
+Browser (HTML + jQuery)
+    ↓  $.ajax JSON, cookies + X-XSRF-TOKEN
+.NET 8 Minimal API (/api/...)
+    ↓
+Application / Service layer
+    ↓
+EF Core → SQL Server
+```
+
+Key difference from the original MVC app: the old app rendered Razor views on
+the server (`Controller → View → HTML`); this frontend is static HTML that
+calls the JSON API and renders with jQuery, because the .NET 8 backend is
+API-only. No Razor, controllers, EF6, OWIN, or Identity 2 were reintroduced.
+
+## Structure
+
+```
+frontend/
+  index.html            Home (hero, categories, featured)
+  catalog.html          Product listing: search, category tree, paging
+  product.html?id=      Product detail: Fancybox gallery, variants
+  cart.html             Cart: update qty / remove / clear (AJAX)
+  checkout.html         Wizard: Address → Shipping → Payment → Confirmation
+  login.html / register.html
+  orders.html           Order history (DataTables)
+  order-detail.html?id= Order detail
+  partials/             header.html, footer.html (loaded via jQuery)
+  css/                  bootstrap, jquery-ui, datatables, fancybox, site.css
+  js/
+    api.js              Centralized API layer (all /api calls, XSRF, errors)
+    layout.js           Header/footer loading, auth state, mini-cart
+    home.js / catalog.js / product.js / cart.js / checkout.js / auth.js / orders.js
+  images/               no-image.png fallback (legacy behaviour)
+  fonts/                Bootstrap glyphicons
+  e2e/                  Playwright journey spec (dev-only, needs npm)
+  dev-server.mjs        Dev-only static server + /api proxy (Node built-ins)
+```
+
+## Running
 
 ```bash
+# 1. Start the backend (from the repo root)
+cd src/LegacyEcom.Api
+ASPNETCORE_ENVIRONMENT=Development dotnet run   # http://localhost:5174
+
+# 2. Start the storefront dev server (from frontend/)
 cd frontend
-npm install
-npm run dev
+node dev-server.mjs        # http://localhost:5173, proxies /api → backend
 ```
 
-Open http://localhost:5173.
+`dev-server.mjs` uses only Node built-ins (no `npm install` needed). It serves
+the static files and proxies `/api/*` to the backend so cookie auth, session
+cart, and XSRF work same-origin — no backend CORS change required. Override
+the backend with `API_PROXY_TARGET=http://host:port`.
 
-### API connection
+## API integration (`js/api.js`)
 
-The backend has no CORS configured (it is treated as frozen), so the Vite dev
-server proxies `/api` to the backend — same-origin from the browser's point of
-view, which is what makes cookie auth + session cart + XSRF work with no
-backend change.
+- `legacyApi` wraps every endpoint: catalog, cart, checkout, auth, orders.
+- `withCredentials` on every request (auth cookie + session cart).
+- XSRF: `GET /api/auth/xsrf-token` sets the readable `XSRF-TOKEN` cookie;
+  `api.js` echoes it as `X-XSRF-TOKEN` on POST/PUT/DELETE and refreshes the
+  token after login/register/logout (tokens are identity-bound).
+- Errors parse ProblemDetails/validation dictionaries into
+  `{ status, message, errors }`; 401s on protected pages redirect to login.
 
-```ts
-// vite.config.ts
-server: { proxy: { '/api': { target: 'http://localhost:5174', changeOrigin: true } } }
-```
-
-Point at a different backend with:
+## Testing
 
 ```bash
-VITE_API_PROXY_TARGET=http://localhost:5099 npm run dev
+# in a scratch dir (keeps frontend/ dependency-free):
+npm init -y && npm i -D @playwright/test
+npx playwright install chromium
+npx playwright test /path/to/frontend/e2e/journey.spec.ts
 ```
 
-For production, serve the built `dist/` from the same origin as the API
-(reverse proxy) or enable CORS on the backend — the built app itself is static.
-
-## Build
-
-```bash
-npm run build   # type-checks (tsc) + produces dist/
-```
-
-## Project structure
-
-```
-frontend/src/
-  api/            # one module per backend area; no raw fetch() in components
-    client.ts     # fetch wrapper: credentials, XSRF, ProblemDetails errors
-    auth.ts       # /api/auth/*
-    catalog.ts    # /api/products/*, /api/categories/*
-    cart.ts       # /api/cart/*
-    checkout.ts   # /api/checkout/*
-    orders.ts     # /api/orders/*
-  state/
-    AuthContext.tsx   # user session (GET /api/auth/me, login/register/logout)
-    CartContext.tsx   # cart + mini-cart drawer state
-  components/     # Header, Footer, ProductCard, ProductImage, MiniCart,
-                  # Field, Pagination, ProtectedRoute
-  pages/          # Home, CatalogPage, ProductDetailPage, CartPage,
-                  # CheckoutPage, LoginPage, RegisterPage, OrdersPage,
-                  # OrderDetailPage
-  types.ts        # DTO mirrors (camelCase, matching ASP.NET Core JSON)
-  utils/format.ts # money/date formatting
-```
-
-## Legacy → modern mapping
-
-| Legacy (Razor) | Modern (React) |
-|---|---|
-| `_Layout.cshtml` | `App.tsx` layout shell |
-| `_Header.cshtml` | `components/Header.tsx` |
-| `_Footer.cshtml` | `components/Footer.tsx` |
-| `_MiniCart.cshtml` | `components/MiniCart.tsx` (drawer) |
-| `_ProductCard.cshtml` | `components/ProductCard.tsx` |
-| `Product/Index.cshtml` | `pages/CatalogPage.tsx` |
-| `Product/_ProductList.cshtml` (AJAX partial) | same page, API-driven re-render |
-| `Product/Detail.cshtml` (+ Fancybox) | `pages/ProductDetailPage.tsx` (lightbox) |
-| `_Sidebar.cshtml` (category tree) | expandable `CategoryNode` in `CatalogPage.tsx` |
-| `Cart/Index.cshtml` | `pages/CartPage.tsx` |
-| `Checkout/Address.cshtml` | `CheckoutPage.tsx` step 1 |
-| `Checkout/Shipping.cshtml` | `CheckoutPage.tsx` step 2 |
-| `Checkout/Payment.cshtml` | `CheckoutPage.tsx` step 3 |
-| `Checkout/Confirmation` | `CheckoutPage.tsx` step 4 |
-| `Account/Login.cshtml` | `pages/LoginPage.tsx` |
-| `Account/Register.cshtml` | `pages/RegisterPage.tsx` |
-| `Account/Orders.cshtml` (+ DataTables) | `pages/OrdersPage.tsx` (plain table) |
-
-## Notes
-
-- Product images: seed data references `/Content/images/...` paths the API
-  does not serve; `ProductImage` renders a neutral placeholder when an image
-  fails to load.
-- Checkout enforces the backend's wizard order (Address → Shipping → Payment);
-  a 409 from the API sends the user back to the address step.
-- Payment is demo-only; the backend validates card fields but makes no real charge.
+The spec covers the full customer journey against the real backend:
+home → catalog/search/category/paging → product detail (gallery, variants) →
+add-to-cart → mini-cart → cart update/remove → register → login → checkout
+(address/shipping/payment/confirmation) → order history (DataTables) →
+order detail → logout → protected-page redirect, plus mobile viewport and
+validation-error cases.

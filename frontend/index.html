@@ -1,13 +1,50 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Northwind Market — Modern eCommerce Storefront</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+    <title>Northwind Market - Home</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/jquery-ui/all.css" />
+    <link rel="stylesheet" href="css/jquery.fancybox.min.css" />
+    <link rel="stylesheet" href="css/site.css" />
+</head>
+<body data-page="home">
+    <div id="site-header"></div>
+
+    <div class="container body-content">
+        <div class="hero-banner">
+            <div class="hero-kicker">The modernized classic store</div>
+            <h1>Everything you need,<br />delivered to your door.</h1>
+            <p class="lead">Browse electronics, home essentials, sports gear and more &mdash; with fast checkout and order tracking.</p>
+            <p>
+                <a href="catalog.html" class="btn btn-default btn-lg">Shop all products</a>
+                <a href="catalog.html" class="btn btn-link btn-lg" style="color:#fff" id="hero-categories">Browse categories</a>
+            </p>
+        </div>
+
+        <h2>Popular categories <a href="catalog.html" class="btn btn-link pull-right">View all &rarr;</a></h2>
+        <div class="row" id="home-categories">
+            <div class="col-xs-12"><p class="text-muted">Loading categories&hellip;</p></div>
+        </div>
+
+        <h2 style="margin-top:30px">Featured products <a href="catalog.html" class="btn btn-link pull-right">View all &rarr;</a></h2>
+        <div class="row" id="home-featured">
+            <div class="col-xs-12"><p class="text-muted">Loading featured products&hellip;</p></div>
+        </div>
+    </div>
+
+    <div id="site-footer"></div>
+
+    <script src="js/jquery-3.4.1.min.js"></script>
+    <script src="js/jquery-ui-1.12.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.validate.min.js"></script>
+    <script src="js/jquery.validate.unobtrusive.min.js"></script>
+    <script src="js/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="js/jquery.fancybox.min.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/home.js"></script>
+</body>
 </html>
